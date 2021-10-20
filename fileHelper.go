@@ -47,8 +47,6 @@ func buildPath(fileNum int) string {
 
 // TODO: Improve/optimize this functionality
 func removeLineFromFile(filePath string, lineNum int) {
-	/*println("line# to DELETE : ", lineNum)
-	println("filePath is : ", filePath)*/
 
 	f, err := os.OpenFile(filePath, os.O_RDWR, os.ModeAppend)
 	if err != nil {
@@ -66,8 +64,6 @@ func removeLineFromFile(filePath string, lineNum int) {
 			tokensStr += fmt.Sprintf("%s\n", scanner.Text())
 		}
 	}
-
-	// println(fmt.Sprintf("tokensStr => %s AND LENGTH: %d", tokensStr, len(tokensStr)))
 
 	if len(tokensStr) > 0 {
 		tokensStr = strings.TrimSuffix(tokensStr, "\n") // remove last `\n`

@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 const tempDir = "temp"
@@ -17,16 +16,10 @@ var jsonHelper JsonHelper
 var lastFoundSortedToken LastFoundSortedToken
 
 func main() {
-	start := time.Now()
-
 	// TODO:  check mandatory inputs
-	// input := flag.String("input", "data/dummy.txt", "Input file to sort")
-	input := flag.String("input", "data/data.txt", "Input file to sort")
-	// input := flag.String("input", "data/data_MEDIUM.txt", "Input file to sort")
-	// input := flag.String("input", "data/data_LARGE.txt", "Input file to sort")
-
+	input := flag.String("input", "data/data.in", "Input file to sort")
 	output := flag.String("output", "data.out", "Output file to store sorted data")
-	field := flag.String("field", "token", "sort by `field` (name or address)")
+	field := flag.String("field", "name", "sort by `field` (name or address)")
 	bufferSize := flag.Int("buffer-size", 4096, "buffer size to use for file operations")
 	flag.Parse()
 
@@ -77,10 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	elapsed := time.Since(start)
-	log.Printf("Finished at: %f", elapsed.Seconds())
-	os.Exit(0)
 }
 
 func proceedWithFinalSort(totalFiles int, field string, lastFoundSortedToken LastFoundSortedToken, deletedFileNums []int) (int, []int) {
@@ -92,12 +81,8 @@ mainLoop:
 		}
 
 		filePath := buildPath(fileNum)
-
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			deletedFileNums = append(deletedFileNums, fileNum)
-
-			/*println("filePath NOT found =>", filePath)
-			println("len(deletedFileNums) : ", len(deletedFileNums))*/
 			continue
 		}
 
@@ -115,36 +100,9 @@ mainLoop:
 			jsonHelper.ToStruct(scanner.Text(), &token)
 			initialSortedToken := token
 
-			/*lastFoundSortedTokenLabel:
-			lastFoundSortedToken := compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
-			if lastFoundSortedToken.FileNum == fileNum && lastFoundSortedToken.LineNum == lineNum && lastFoundSortedToken.Token == initialSortedToken {
-				goto lastFoundSortedTokenLabel // kinda recursion ;)
-			}*/
-
 			lastFoundSortedToken = compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
-			// printStruct("\n lastFoundSortedToken", lastFoundSortedToken)
 			performActionsAfterLastFoundSortedToken(lastFoundSortedToken, field)
-			// println()
 			break mainLoop
-			/*printStruct("lastFoundSortedToken", lastFoundSortedToken)
-			println()
-
-
-			// initially found in temp3
-			performActionsAfterLastFoundSortedToken(lastFoundSortedToken, field)
-
-			lastFoundSortedToken = compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
-			printStruct("lastFoundSortedToken", lastFoundSortedToken)
-			println()
-
-			// found in same/current file
-			if lastFoundSortedToken.FileNum == fileNum && lastFoundSortedToken.LineNum == lineNum && lastFoundSortedToken.Token == initialSortedToken {
-				removeLastFoundSortedToken(lastFoundSortedToken)
-
-				lastFoundSortedToken = compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
-				printStruct("lastFoundSortedToken", lastFoundSortedToken)
-				println()
-			}*/
 		}
 	}
 
@@ -163,18 +121,13 @@ func compareWithOtherFiles(i int, lineNum int, fileNameCount int, initialSortedT
 		Token:   initialSortedToken,
 	}
 
-	// println(fmt.Sprintf("\n------------ Dataset#: %d, initialSortedToken: %+v", i, initialSortedToken))
-	// var msg = ""
-
 	var f *os.File
 mainLoop:
 	for j := 1; j <= fileNameCount; j++ {
-		if i != j { // 1 != 1
-
+		if i != j {
 			filePath := buildPath(j)
-			// println("\n filePath =>", filePath)
-
 			currentLineNum := 0
+
 			if _, err := os.Stat(filePath); err == nil {
 				f, _ = os.Open(filePath)
 				scanner := bufio.NewScanner(f)
@@ -182,30 +135,20 @@ mainLoop:
 				for scanner.Scan() {
 					currentLineNum += 1
 
-					// println("currentLineNum: ", currentLineNum)
 					var token Token
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
 					result := 0
 					if field == "name" {
-						// msg = fmt.Sprintf("Comparing %s AND %s", initialSortedToken.Name, token.Name)
 						result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
 						if result != 1 {
-							// msg += fmt.Sprintf("   => %s, %d", initialSortedToken.Name, result)
-							// println(msg)
 						}
 					} else {
-						// msg = fmt.Sprintf("Comparing %s AND %s", initialSortedToken.Address, token.Address)
 						result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
 					}
 
 					if result == 1 {
-						/*msg += fmt.Sprintf("result == 1,,,   => %s, %d", token.Name, result)
-						println(msg)*/
-
 						if j == fileNameCount {
-							/*appendToFinalSortedDataset(token, field)
-							removeLineFromFile(filePath, currentLineNum)*/
 							lastFoundSortedToken = LastFoundSortedToken{
 								FileNum: j,
 								LineNum: currentLineNum,
@@ -213,10 +156,6 @@ mainLoop:
 							}
 
 							break mainLoop
-
-							// we are in last dataset
-							// repeat comparing same initial token
-							// compareWithOtherFiles(i, fileNameCount, initialSortedToken, field)
 						} else {
 							// track the current line & token
 							lastFoundSortedToken = LastFoundSortedToken{
@@ -224,19 +163,12 @@ mainLoop:
 								LineNum: currentLineNum,
 								Token:   token,
 							}
-
-							// printStruct("lastFoundSortedToken is NOW: ", lastFoundSortedToken)
 						}
 					}
 				}
 			}
 		}
 	}
-
-	/*err := f.Close()
-	if err != nil {
-		log.Fatal("f.Close(): ", err)
-	}*/
 
 	return lastFoundSortedToken
 }
@@ -251,7 +183,6 @@ func appendToFinalSortedDataset(token Token, field string) {
 	defer closeFile(f)
 
 	str := fmt.Sprintf("%s\n", jsonHelper.ToJson(token))
-	// println("appendToFinalSortedDataset => ", str)
 	if _, err := f.WriteString(str); err != nil {
 		log.Fatal(err)
 	}
@@ -276,8 +207,4 @@ func contains(s []int, e int) bool {
 	}
 
 	return false
-}
-
-func printStruct(msg string, s interface{}) {
-	println(fmt.Sprintf("%s: %+v", msg, s))
 }
