@@ -43,7 +43,7 @@ func main() {
 
 	// at this point, we have sorted data sets in respective files
 	// next, we will take first item from first dataset and compare it with all tokens of each dataset
-	// during comparison, if some item from other dataset is in sorted order, then we make it default sorted value
+	// during comparison, if some item from other dataset is in sorted order, then we make it default/initial sorted value
 	// at end of comparisons with all datasets, we remove it from specific dataset and put/append in final sorted dataset
 	// this process continues, until all entries are matched
 	// if some file has no entries, then we simply delete it, so it's not compared next time
@@ -155,6 +155,8 @@ mainLoop:
 								Token:   token,
 							}
 
+							// no need to check in remaining tokens, since we are in LAST dataset
+							// and this file's tokens are already in sorted
 							break mainLoop
 						} else {
 							// track the current line & token
