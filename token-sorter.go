@@ -17,7 +17,7 @@ var lastFoundSortedToken LastFoundSortedToken
 
 func main() {
 	// TODO: check mandatory inputs
-	input := flag.String("input", "data/data.in", "Input file to sort")
+	input := flag.String("input", "data.in", "Input file to sort")
 	output := flag.String("output", "data.out", "Output file to store sorted data")
 	field := flag.String("field", "name", "sort by `field` (name or address)")
 
@@ -50,11 +50,6 @@ func main() {
 	// this process continues, until all entries are matched
 	// if some file has no entries, then we simply delete it, so it's not compared next time
 
-	filePath := fmt.Sprintf("data_sorted_%s.txt", *field)
-
-	// perhaps we could reuse this final sorted file ?
-	removeFile(filePath)
-
 	lastFoundSortedToken = LastFoundSortedToken{
 		FileNum: 1,
 		LineNum: 1,
@@ -70,6 +65,12 @@ func main() {
 	// cleanup
 	err := os.RemoveAll(tempDir)
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	// finally, rename to expected/given name
+	generatedPath := fmt.Sprintf("data_sorted_%s.txt", *field)
+	if err = os.Rename(generatedPath, *output); err != nil {
 		log.Fatal(err)
 	}
 }

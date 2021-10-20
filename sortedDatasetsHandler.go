@@ -73,7 +73,6 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 
 func handleTokens(wg *sync.WaitGroup, field string, tokens []Token, fileNameCount int) {
 	defer wg.Done()
-	println(fileNameCount, len(tokens))
 
 	handleSort(field, tokens)
 	tempSave(fileNameCount, tokens) // tokens are now in sorted order

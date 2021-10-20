@@ -161,8 +161,8 @@
 {"Name":"Orchid","Address":"0x4575f41308EC1483f3d399aa9a2826d74Da13Deb"}
 {"Name":"OriginToken","Address":"0x8207c1FfC5B6804F6024322CcF34F29c3541Ae26"}
 {"Name":"Orion Protocol","Address":"0x0258F474786DdFd37ABCE6df6BBb1Dd5dfC4434a"}
-{"Name":"PAID Network","Address":"0x1614F18Fc94f47967A3Fbe5FfcD46d4e7Da3D787"}
 {"Name":"PAID Network","Address":"0x8c8687fC965593DFb2F0b4EAeFD55E9D8df348df"}
+{"Name":"PAID Network","Address":"0x1614F18Fc94f47967A3Fbe5FfcD46d4e7Da3D787"}
 {"Name":"PILLAR","Address":"0xe3818504c1B32bF1557b16C238B2E01Fd3149C17"}
 {"Name":"PUSH","Address":"0xf418588522d5dd018b425E472991E52EBBeEEEEE"}
 {"Name":"Parsiq Token","Address":"0x362bc847A3a9637d3af6624EeC853618a43ed7D2"}
@@ -178,8 +178,8 @@
 {"Name":"PoolTogether","Address":"0x0cEC1A9154Ff802e7934Fc916Ed7Ca50bDE6844e"}
 {"Name":"PowerTrade Fuel Token","Address":"0xC57d533c50bC22247d49a368880fb49a1caA39F7"}
 {"Name":"Public Mint","Address":"0x0CDF9acd87E940837ff21BB40c9fd55F68bba059"}
-{"Name":"Pundi X Token","Address":"0x0FD10b9899882a6f2fcb5c371E17e70FdEe00C38"}
 {"Name":"Pundi X Token","Address":"0xA15C7Ebe1f07CaF6bFF097D8a589fb8AC49Ae5B3"}
+{"Name":"Pundi X Token","Address":"0x0FD10b9899882a6f2fcb5c371E17e70FdEe00C38"}
 {"Name":"Quant","Address":"0x4a220E6096B25EADb88358cb44068A3248254675"}
 {"Name":"QuiverX","Address":"0x6e0daDE58D2d89eBBe7aFc384e3E4f15b70b14D8"}
 {"Name":"RAMP DEFI","Address":"0x33D0568941C0C64ff7e0FB4fbA0B11BD37deEd9f"}
@@ -273,8 +273,8 @@
 {"Name":"YOP","Address":"0xAE1eaAE3F627AAca434127644371b67B18444051"}
 {"Name":"Yearn.Finance","Address":"0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e"}
 {"Name":"YfDAI.finance","Address":"0xf4CD3d3Fda8d7Fd6C5a500203e38640A70Bf9577"}
-{"Name":"Yield","Address":"0xF94b5C5651c888d928439aB6514B93944eEE6F48"}
 {"Name":"Yield","Address":"0xDcB01cc464238396E213a6fDd933E36796eAfF9f"}
+{"Name":"Yield","Address":"0xF94b5C5651c888d928439aB6514B93944eEE6F48"}
 {"Name":"ZEN Exchange Token","Address":"0xC52C326331E9Ce41F04484d3B5E5648158028804"}
 {"Name":"Zenfuse Trading Platform Token","Address":"0xB1e9157c2Fdcc5a856C8DA8b2d89b6C32b3c1229"}
 {"Name":"ZeroSwapToken","Address":"0x2eDf094dB69d6Dcd487f1B3dB9febE2eeC0dd4c5"}
