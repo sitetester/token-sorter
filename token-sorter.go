@@ -159,7 +159,6 @@ mainLoop:
 							// and this file's tokens are already in sorted
 							break mainLoop
 						} else {
-							// track the current line & token
 							lastFoundSortedToken = LastFoundSortedToken{
 								FileNum: j,
 								LineNum: currentLineNum,
