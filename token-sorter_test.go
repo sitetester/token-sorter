@@ -8,7 +8,7 @@ import (
 
 func TestSortByName(t *testing.T) {
 	input := "./data/dummy.txt"
-	output := "./data_out/dummy_output_name.txt"
+	output := "data.out"
 	Sort(input, output, 4096, "name")
 
 	testOutFileExists(t, output)
@@ -54,7 +54,7 @@ func testTokenMatchLineNum(t *testing.T, lineNum string, expectedToken Token) {
 
 func TestSortByAddress(t *testing.T) {
 	input := "./data/dummy.txt"
-	output := "./data_out/dummy_output_address.txt"
+	output := "data.out"
 	Sort(input, output, 4096, "address")
 
 	testOutFileExists(t, output)

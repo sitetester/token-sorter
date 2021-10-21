@@ -77,7 +77,7 @@ func handleTokens(wg *sync.WaitGroup, field string, tokens []Token, fileNameCoun
 }
 
 func handleSort(field string, tokens []Token) {
-	if field == "name" {
+	if field == sortByFieldName {
 		sortByName(tokens)
 	} else {
 		sortByAddress(tokens)

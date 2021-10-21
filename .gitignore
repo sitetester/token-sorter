@@ -1,5 +1,4 @@
 /temp
 .idea
-# this is meant to keep only output sorted files
-/data_out
+data.out
 token-sorter

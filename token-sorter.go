@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+const sortByFieldName = "name"
 const tempDir = "temp"
 const dataSortedTemp = tempDir + "/data_sorted_temp"
 
@@ -16,18 +17,18 @@ var jsonHelper JsonHelper
 var lastFoundSortedToken LastFoundSortedToken
 
 func main() {
-	input := flag.String("input", "data.in", "Input file to sort")
-	output := flag.String("output", "data.out", "Output file to store sorted data")
+	input := flag.String("input", "data/data.in", "Input file to sort")
+	output := flag.String("output", "./data.out", "Output file to store sorted data")
 	// In general, we don’t need to specify buffer, since Golang bufio scanner uses an internal buffer by default
 	bufferSize := flag.Int("buffer-size", 4096, "buffer size to use for file operations")
 	flag.Parse()
 
-	field := "name"
+	field := sortByFieldName
 	if len(flag.Args()) > 0 {
 		field = flag.Args()[0]
 	}
 
-	if field != "name" && field != "address" {
+	if field != sortByFieldName && field != "address" {
 		println("Only `name` or `address` could be used for sorting")
 		return
 	}
@@ -139,14 +140,7 @@ mainLoop:
 					var token Token
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
-					result := 0
-					if field == "name" {
-						result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
-					} else {
-						result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
-					}
-
-					if result == 1 {
+					if isLastFoundSortedTokenGreater(lastFoundSortedToken, token, field) {
 						if j == fileNameCount {
 							lastFoundSortedToken = LastFoundSortedToken{
 								FileNum: j,
@@ -192,6 +186,17 @@ func appendToFinalSortedDataset(token Token, field string, isFirstLine bool) {
 	if _, err := f.WriteString(str); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func isLastFoundSortedTokenGreater(lastFoundSortedToken LastFoundSortedToken, token Token, field string) bool {
+	var result int
+	if field == sortByFieldName {
+		result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
+	} else {
+		result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
+	}
+
+	return result == 1
 }
 
 type LastFoundSortedToken struct {
