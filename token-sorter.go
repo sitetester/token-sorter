@@ -18,11 +18,19 @@ var lastFoundSortedToken LastFoundSortedToken
 func main() {
 	input := flag.String("input", "data.in", "Input file to sort")
 	output := flag.String("output", "data.out", "Output file to store sorted data")
-	field := flag.String("field", "name", "sort by `field` (name or address)")
-
 	// In general, we don’t need to specify buffer, since Golang bufio scanner uses an internal buffer by default
 	bufferSize := flag.Int("buffer-size", 4096, "buffer size to use for file operations")
 	flag.Parse()
+
+	field := "name"
+	if len(flag.Args()) > 0 {
+		field = flag.Args()[0]
+	}
+
+	if field != "name" && field != "token" {
+		println("Only `name` or `token` could be provided for `field` argument")
+		return
+	}
 
 	if *input == "" {
 		println("Please provide an `input` argument, e.g. --input=data.in")
@@ -34,13 +42,8 @@ func main() {
 		return
 	}
 
-	if *field != "name" && *field != "token" {
-		println("Only `name` or `token` could be provided for `field` argument")
-		return
-	}
-
 	var sortedDatasetsHandler SortedDatasetsHandler
-	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(*input, *bufferSize, *field)
+	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(*input, *bufferSize, field)
 
 	// at this point, we have sorted data sets in respective files
 	// next, we will take first item from first dataset and compare it with all tokens of each dataset
@@ -58,7 +61,7 @@ func main() {
 
 	// proceed with final sort
 	for len(deletedFileNums) != totalFiles {
-		totalFiles, deletedFileNums = proceedWithFinalSort(totalFiles, *field, lastFoundSortedToken, deletedFileNums)
+		totalFiles, deletedFileNums = proceedWithFinalSort(totalFiles, field, lastFoundSortedToken, deletedFileNums)
 	}
 
 	// cleanup
@@ -68,7 +71,7 @@ func main() {
 	}
 
 	// finally, rename to expected/given name
-	generatedPath := fmt.Sprintf("data_sorted_%s.txt", *field)
+	generatedPath := fmt.Sprintf("data_sorted_%s.txt", field)
 	if err = os.Rename(generatedPath, *output); err != nil {
 		log.Fatal(err)
 	}
