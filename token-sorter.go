@@ -16,12 +16,11 @@ var jsonHelper JsonHelper
 var lastFoundSortedToken LastFoundSortedToken
 
 func main() {
-	// TODO: check mandatory inputs
 	input := flag.String("input", "data.in", "Input file to sort")
 	output := flag.String("output", "data.out", "Output file to store sorted data")
 	field := flag.String("field", "name", "sort by `field` (name or address)")
 
-	// since Golang bufio scanner uses an internal buffer by default, In general, we don’t need to specify it
+	// In general, we don’t need to specify buffer, since Golang bufio scanner uses an internal buffer by default
 	bufferSize := flag.Int("buffer-size", 4096, "buffer size to use for file operations")
 	flag.Parse()
 

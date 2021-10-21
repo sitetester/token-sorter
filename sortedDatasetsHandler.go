@@ -36,7 +36,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 	count := 0
 	totalFiles := 0
 	// const maxLines = 10000 // when we get a much larger file, then we can split it into 10k lines of files each
-	const maxLines = 1000
+	const maxLines = 2
 
 	for scanner.Scan() {
 		count += 1
