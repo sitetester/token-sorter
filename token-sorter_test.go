@@ -9,7 +9,9 @@ import (
 func TestSortByName(t *testing.T) {
 	input := "./data/dummy.txt"
 	output := "data.out"
-	Sort(input, output, 4096, "name")
+
+	var ts TokenSorter
+	ts.Sort(input, output, 4096, SortByFieldName)
 
 	testOutFileExists(t, output)
 
@@ -55,7 +57,9 @@ func testTokenMatchLineNum(t *testing.T, lineNum string, expectedToken Token) {
 func TestSortByAddress(t *testing.T) {
 	input := "./data/dummy.txt"
 	output := "data.out"
-	Sort(input, output, 4096, "address")
+
+	var ts TokenSorter
+	ts.Sort(input, output, 4096, SortByFieldAddress)
 
 	testOutFileExists(t, output)
 
