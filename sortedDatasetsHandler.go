@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"sort"
-	"strings"
 	"sync"
 )
 
@@ -35,8 +34,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 
 	count := 0
 	totalFiles := 0
-	// const maxLines = 10000 // when we get a much larger file, then we can split it into 10k lines of files each
-	const maxLines = 2
+	const maxLines = 10000 // when we get a much larger file, then we can split it into 10k lines of files each
 
 	for scanner.Scan() {
 		count += 1
@@ -102,12 +100,17 @@ func tempSave(fileNameCount int, tokens []Token) {
 	f := createFile(fmt.Sprintf("%s/data_sorted_temp_%d.txt", tempDir, fileNameCount))
 	defer closeFile(f)
 
+	lineNum := 0
 	tokensStr := ""
 	for _, token := range tokens {
-		tokensStr += fmt.Sprintf("%s\n", jsonHelper.ToJson(token))
+		lineNum += 1
+		if lineNum == 1 {
+			tokensStr += fmt.Sprintf("%s", jsonHelper.ToJson(token))
+		} else {
+			tokensStr += fmt.Sprintf("\n%s", jsonHelper.ToJson(token))
+		}
 	}
 
-	tokensStr = strings.TrimSuffix(tokensStr, "\n") // remove last `\n`
 	_, err := f.WriteString(tokensStr)
 	if err != nil {
 		log.Fatal(err)

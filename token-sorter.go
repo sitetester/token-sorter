@@ -27,13 +27,17 @@ func main() {
 		field = flag.Args()[0]
 	}
 
-	if field != "name" && field != "token" {
-		println("Only `name` or `token` could be provided for `field` argument")
+	if field != "name" && field != "address" {
+		println("Only `name` or `address` could be used for sorting")
 		return
 	}
 
+	Sort(*input, *output, *bufferSize, field)
+}
+
+func Sort(input string, output string, bufferSize int, field string) {
 	var sortedDatasetsHandler SortedDatasetsHandler
-	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(*input, *bufferSize, field)
+	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(input, bufferSize, field)
 
 	// at this point, we have sorted data sets in respective files
 	// next, we will take first item from first dataset and compare it with all tokens of each dataset
@@ -49,9 +53,11 @@ func main() {
 
 	var deletedFileNums []int
 
+	isFirstLine := true
 	// proceed with final sort
 	for len(deletedFileNums) != totalFiles {
-		totalFiles, deletedFileNums = proceedWithFinalSort(totalFiles, field, lastFoundSortedToken, deletedFileNums)
+		totalFiles, deletedFileNums = proceedWithFinalSort(totalFiles, field, lastFoundSortedToken, deletedFileNums, isFirstLine)
+		isFirstLine = false
 	}
 
 	// cleanup
@@ -62,12 +68,12 @@ func main() {
 
 	// finally, rename to expected/given name
 	generatedPath := fmt.Sprintf("data_sorted_%s.txt", field)
-	if err = os.Rename(generatedPath, *output); err != nil {
+	if err = os.Rename(generatedPath, output); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func proceedWithFinalSort(totalFiles int, field string, lastFoundSortedToken LastFoundSortedToken, deletedFileNums []int) (int, []int) {
+func proceedWithFinalSort(totalFiles int, field string, lastFoundSortedToken LastFoundSortedToken, deletedFileNums []int, isFirstLine bool) (int, []int) {
 
 mainLoop:
 	for fileNum := 1; fileNum <= totalFiles; fileNum++ {
@@ -96,7 +102,7 @@ mainLoop:
 			initialSortedToken := token
 
 			lastFoundSortedToken = compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
-			performActionsAfterLastFoundSortedToken(lastFoundSortedToken, field)
+			performActionsAfterLastFoundSortedToken(lastFoundSortedToken, field, isFirstLine)
 			break mainLoop
 		}
 	}
@@ -104,8 +110,8 @@ mainLoop:
 	return totalFiles, deletedFileNums
 }
 
-func performActionsAfterLastFoundSortedToken(lastFoundSortedToken LastFoundSortedToken, field string) {
-	appendToFinalSortedDataset(lastFoundSortedToken.Token, field)
+func performActionsAfterLastFoundSortedToken(lastFoundSortedToken LastFoundSortedToken, field string, isFirstLine bool) {
+	appendToFinalSortedDataset(lastFoundSortedToken.Token, field, isFirstLine)
 	removeLineFromFile(buildPath(lastFoundSortedToken.FileNum), lastFoundSortedToken.LineNum)
 }
 
@@ -136,8 +142,6 @@ mainLoop:
 					result := 0
 					if field == "name" {
 						result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
-						if result != 1 {
-						}
 					} else {
 						result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
 					}
@@ -169,7 +173,7 @@ mainLoop:
 	return lastFoundSortedToken
 }
 
-func appendToFinalSortedDataset(token Token, field string) {
+func appendToFinalSortedDataset(token Token, field string, isFirstLine bool) {
 	filePath := fmt.Sprintf("data_sorted_%s.txt", field)
 
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -178,7 +182,13 @@ func appendToFinalSortedDataset(token Token, field string) {
 	}
 	defer closeFile(f)
 
-	str := fmt.Sprintf("%s\n", jsonHelper.ToJson(token))
+	var str string
+	if isFirstLine {
+		str = fmt.Sprintf("%s", jsonHelper.ToJson(token))
+	} else {
+		str = fmt.Sprintf("\n%s", jsonHelper.ToJson(token))
+	}
+
 	if _, err := f.WriteString(str); err != nil {
 		log.Fatal(err)
 	}

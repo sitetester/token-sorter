@@ -1,4 +1,4 @@
 /temp
-/data
 .idea
-data.out
+# this is meant to keep only output sorted files
+/data_out
