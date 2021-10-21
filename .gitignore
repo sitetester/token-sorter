@@ -2,3 +2,4 @@
 .idea
 # this is meant to keep only output sorted files
 /data_out
+./token-sorter
