@@ -70,4 +70,10 @@ func TestSortByAddress(t *testing.T) {
 		Name:    "Reef.finance",
 		Address: "0xFE3E6a25e6b192A42a44ecDDCd13796471735ACf",
 	})
+
+	// last line
+	testTokenMatchLineNum(t, lines[len(lines)-1], Token{
+		Name:    "FalconSwap Token",
+		Address: "0xfffffffFf15AbF397dA76f1dcc1A1604F45126DB",
+	})
 }
