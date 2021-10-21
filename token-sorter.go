@@ -32,16 +32,6 @@ func main() {
 		return
 	}
 
-	if *input == "" {
-		println("Please provide an `input` argument, e.g. --input=data.in")
-		return
-	}
-
-	if *output == "" {
-		println("Please provide an `output` argument, e.g. --output=data.out")
-		return
-	}
-
 	var sortedDatasetsHandler SortedDatasetsHandler
 	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(*input, *bufferSize, field)
 
