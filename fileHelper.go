@@ -47,7 +47,6 @@ func buildPath(fileNum int) string {
 
 // TODO: Improve/optimize this functionality
 func removeLineFromFile(filePath string, lineNum int) {
-
 	f, err := os.OpenFile(filePath, os.O_RDWR, os.ModeAppend)
 	if err != nil {
 		log.Fatal(err)
@@ -59,7 +58,6 @@ func removeLineFromFile(filePath string, lineNum int) {
 
 	for scanner.Scan() {
 		currentLineNum += 1
-
 		if currentLineNum != lineNum {
 			tokensStr += fmt.Sprintf("%s\n", scanner.Text())
 		}
