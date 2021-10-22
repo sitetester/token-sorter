@@ -111,9 +111,9 @@ func compareWithOtherFiles(fileNum int, lineNum int, fileNameCount int, initialS
 
 	var f *os.File
 mainLoop:
-	for j := 1; j <= fileNameCount; j++ {
-		if fileNum != j {
-			filePath := buildPath(j)
+	for datasetNum := 1; datasetNum <= fileNameCount; datasetNum++ {
+		if fileNum != datasetNum {
+			filePath := buildPath(datasetNum)
 			currentLineNum := 0
 
 			if _, err := os.Stat(filePath); err == nil {
@@ -127,9 +127,9 @@ mainLoop:
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
 					if isLastFoundSortedTokenGreater(lastFoundSortedToken, token, field) {
-						if j == fileNameCount {
+						if datasetNum == fileNameCount {
 							lastFoundSortedToken = LastFoundSortedToken{
-								FileNum: j,
+								FileNum: datasetNum,
 								LineNum: currentLineNum,
 								Token:   token,
 							}
@@ -139,7 +139,7 @@ mainLoop:
 							break mainLoop
 						} else {
 							lastFoundSortedToken = LastFoundSortedToken{
-								FileNum: j,
+								FileNum: datasetNum,
 								LineNum: currentLineNum,
 								Token:   token,
 							}
