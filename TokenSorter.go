@@ -102,9 +102,9 @@ mainLoop:
 	return totalFiles, deletedFileNums
 }
 
-func compareWithOtherFiles(i int, lineNum int, fileNameCount int, initialSortedToken Token, field string) LastFoundSortedToken {
+func compareWithOtherFiles(fileNum int, lineNum int, fileNameCount int, initialSortedToken Token, field string) LastFoundSortedToken {
 	lastFoundSortedToken = LastFoundSortedToken{
-		FileNum: i,
+		FileNum: fileNum,
 		LineNum: lineNum,
 		Token:   initialSortedToken,
 	}
@@ -112,7 +112,7 @@ func compareWithOtherFiles(i int, lineNum int, fileNameCount int, initialSortedT
 	var f *os.File
 mainLoop:
 	for j := 1; j <= fileNameCount; j++ {
-		if i != j {
+		if fileNum != j {
 			filePath := buildPath(j)
 			currentLineNum := 0
 
