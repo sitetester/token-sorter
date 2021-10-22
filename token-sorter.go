@@ -28,13 +28,3 @@ func main() {
 	var tokenSorter TokenSorter
 	tokenSorter.Sort(*input, *output, *bufferSize, field)
 }
-
-func contains(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-
-	return false
-}
