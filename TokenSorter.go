@@ -155,7 +155,6 @@ func (ts *TokenSorter) performActionsAfterLastFoundSortedToken(lastFoundSortedTo
 }
 
 func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool) {
-
 	f, err := os.OpenFile(ts.OutputPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
