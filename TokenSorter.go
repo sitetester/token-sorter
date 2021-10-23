@@ -36,9 +36,10 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(input, bufferSize, field)
 
 	// at this point, we have sorted data sets in respective files
-	// next, we will take first item from first dataset and compare it with all tokens of each dataset
-	// during comparison, if some item from other dataset is in sorted order, then we make it default/initial sorted value
-	// at end of comparisons with all datasets, we remove it from specific dataset and put/append in final sorted dataset
+	// next, we will take first token from first file and compare it with tokens of all other files
+	// during comparison, if some token from other file is in sorted order, then we make it default/initial sorted token
+	// & jump to next file, since all remaining tokens in THAT file are already in sorted form
+	// at end of comparisons with all files, we remove it from specific file and put/append in final sorted file
 	// this process continues, until all entries are matched
 	// if some file has no entries, then we simply delete it, so it's not compared next time
 
@@ -47,18 +48,16 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 		LineNum: 1,
 	}
 
-	var deletedFileNums []int
-
-	isFirstLine := true
 	// proceed with final sort
+	isFirstLine := true
+	var deletedFileNums []int
 	for len(deletedFileNums) != totalFiles {
 		totalFiles, deletedFileNums = ts.proceedWithFinalSort(totalFiles, field, lastFoundSortedToken, deletedFileNums, isFirstLine)
 		isFirstLine = false
 	}
 
-	// cleanup
-	err := os.RemoveAll(tempDir) // just in case any file left inside this directory previously
-	if err != nil {
+	// cleanup, just in case any file left inside previously
+	if err := os.RemoveAll(tempDir); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -79,12 +78,12 @@ mainLoop:
 			continue
 		}
 
-		lineNum := 0
 		f, err := os.Open(filePath)
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		lineNum := 0
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			lineNum += 1
@@ -102,7 +101,7 @@ mainLoop:
 	return totalFiles, deletedFileNums
 }
 
-func compareWithOtherFiles(fileNum int, lineNum int, fileNameCount int, initialSortedToken Token, field string) LastFoundSortedToken {
+func compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token, field string) LastFoundSortedToken {
 	lastFoundSortedToken = LastFoundSortedToken{
 		FileNum: fileNum,
 		LineNum: lineNum,
@@ -111,38 +110,35 @@ func compareWithOtherFiles(fileNum int, lineNum int, fileNameCount int, initialS
 
 	var f *os.File
 mainLoop:
-	for datasetNum := 1; datasetNum <= fileNameCount; datasetNum++ {
-		if fileNum != datasetNum {
-			filePath := buildPath(datasetNum)
-			currentLineNum := 0
+	for otherFileNum := 1; otherFileNum <= totalFiles; otherFileNum++ {
+		if fileNum != otherFileNum { // skip matching in same/given file
+			filePath := buildPath(otherFileNum)
 
 			if _, err := os.Stat(filePath); err == nil {
 				f, _ = os.Open(filePath)
 				scanner := bufio.NewScanner(f)
 
+				currentLineNum := 0
 				for scanner.Scan() {
 					currentLineNum += 1
-
 					var token Token
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
 					if isLastFoundSortedTokenGreater(lastFoundSortedToken, token, field) {
-						if datasetNum == fileNameCount {
-							lastFoundSortedToken = LastFoundSortedToken{
-								FileNum: datasetNum,
-								LineNum: currentLineNum,
-								Token:   token,
-							}
+						lastFoundSortedToken = LastFoundSortedToken{
+							FileNum: otherFileNum,
+							LineNum: currentLineNum,
+							Token:   token,
+						}
 
+						if otherFileNum == totalFiles {
 							// no need to check in remaining tokens, since we are in LAST dataset
-							// and this file's tokens are already in sorted
+							// and this file's tokens are already sorted
 							break mainLoop
 						} else {
-							lastFoundSortedToken = LastFoundSortedToken{
-								FileNum: datasetNum,
-								LineNum: currentLineNum,
-								Token:   token,
-							}
+							// jump to next file, since current file/dataset is already in sorted form
+							// hence no need to check in remaining tokens
+							continue mainLoop
 						}
 					}
 				}
