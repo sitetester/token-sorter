@@ -8,6 +8,15 @@ import (
 	"strings"
 )
 
+func getScanner(file *os.File, bufferSize int) *bufio.Scanner {
+	scanner := bufio.NewScanner(file)
+
+	buf := make([]byte, bufio.MaxScanTokenSize)
+	scanner.Buffer(buf, bufferSize)
+
+	return scanner
+}
+
 func createFile(filePath string) *os.File {
 	f, err := os.Create(filePath)
 	if err != nil {
@@ -45,8 +54,8 @@ func buildPath(fileNum int) string {
 	return fmt.Sprintf("%s_%d.txt", dataSortedTemp, fileNum)
 }
 
-func removeLineFromFile(filePath string, lineNum int) {
-	f, err := os.OpenFile(filePath, os.O_RDWR, os.ModeAppend)
+func removeLineFromFile(filePath string, lineNum int, bufferSize int) {
+	fr, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,7 +63,7 @@ func removeLineFromFile(filePath string, lineNum int) {
 	var sb strings.Builder
 	isFirstLine := true
 	currentLineNum := 0
-	scanner := bufio.NewScanner(f)
+	scanner := getScanner(fr, bufferSize)
 
 	for scanner.Scan() {
 		currentLineNum += 1
@@ -70,12 +79,17 @@ func removeLineFromFile(filePath string, lineNum int) {
 		}
 	}
 
-	tokensStr := sb.String()
+	tokenStr := sb.String()
+	closeFile(fr)
 
-	if len(tokensStr) > 0 {
-		removeFile(filePath)
-		f = createFile(filePath)
-		_, err = f.WriteString(tokensStr)
+	if len(tokenStr) > 0 {
+		// truncate file
+		fw, err := os.Create(filePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = fw.WriteString(tokenStr)
 		if err != nil {
 			log.Fatal(err)
 		}
