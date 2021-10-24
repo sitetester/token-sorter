@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 )
 
@@ -25,7 +26,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 	var token Token
 	var tokens []Token
 
-	scanner := bufio.NewScanner(file)
+	scanner := getScanner(file, bufferSize)
 
 	buf := make([]byte, bufio.MaxScanTokenSize)
 	scanner.Buffer(buf, bufferSize)
@@ -103,18 +104,19 @@ func tempSave(fileNameCount int, tokens []Token) {
 	f := createFile(fmt.Sprintf("%s/data_sorted_temp_%d.txt", tempDir, fileNameCount))
 	defer closeFile(f)
 
+	var sb strings.Builder
 	lineNum := 0
-	tokensStr := ""
 	for _, token := range tokens {
 		lineNum += 1
+		json := jsonHelper.ToJson(token)
 		if lineNum == 1 {
-			tokensStr += fmt.Sprintf("%s", jsonHelper.ToJson(token))
+			sb.WriteString(fmt.Sprintf("%s", json))
 		} else {
-			tokensStr += fmt.Sprintf("\n%s", jsonHelper.ToJson(token))
+			sb.WriteString(fmt.Sprintf("\n%s", json))
 		}
 	}
 
-	_, err := f.WriteString(tokensStr)
+	_, err := f.WriteString(sb.String())
 	if err != nil {
 		log.Fatal(err)
 	}

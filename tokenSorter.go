@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -24,6 +23,7 @@ const dataSortedTemp = tempDir + "/data_sorted_temp"
 
 type TokenSorter struct {
 	OutputPath string
+	bufferSize int
 }
 
 func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field string) {
@@ -31,6 +31,7 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	// clean start
 	removeFile(output)
 	ts.OutputPath = output
+	ts.bufferSize = bufferSize
 
 	var sortedDatasetsHandler SortedDatasetsHandler
 	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(input, bufferSize, field)
@@ -84,7 +85,7 @@ mainLoop:
 		}
 
 		lineNum := 0
-		scanner := bufio.NewScanner(f)
+		scanner := getScanner(f, ts.bufferSize)
 		for scanner.Scan() {
 			lineNum += 1
 
@@ -92,8 +93,11 @@ mainLoop:
 			jsonHelper.ToStruct(scanner.Text(), &token)
 			initialSortedToken := token
 
-			lastFoundSortedToken = compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
+			lastFoundSortedToken = ts.compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
 			ts.performActionsAfterLastFoundSortedToken(lastFoundSortedToken, isFirstLine)
+
+			// start again from beginning (fileNum=1, lineNum=1)
+			// this will ensure `isFirstLine` is `false` next time
 			break mainLoop
 		}
 	}
@@ -101,7 +105,7 @@ mainLoop:
 	return totalFiles, deletedFileNums
 }
 
-func compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token, field string) LastFoundSortedToken {
+func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token, field string) LastFoundSortedToken {
 	lastFoundSortedToken = LastFoundSortedToken{
 		FileNum: fileNum,
 		LineNum: lineNum,
@@ -116,7 +120,7 @@ mainLoop:
 
 			if _, err := os.Stat(filePath); err == nil {
 				f, _ = os.Open(filePath)
-				scanner := bufio.NewScanner(f)
+				scanner := getScanner(f, ts.bufferSize)
 
 				currentLineNum := 0
 				for scanner.Scan() {
@@ -151,7 +155,7 @@ mainLoop:
 
 func (ts *TokenSorter) performActionsAfterLastFoundSortedToken(lastFoundSortedToken LastFoundSortedToken, isFirstLine bool) {
 	ts.appendToFinalSortedDataset(lastFoundSortedToken.Token, isFirstLine)
-	removeLineFromFile(buildPath(lastFoundSortedToken.FileNum), lastFoundSortedToken.LineNum)
+	removeLineFromFile(buildPath(lastFoundSortedToken.FileNum), lastFoundSortedToken.LineNum, ts.bufferSize)
 }
 
 func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool) {
