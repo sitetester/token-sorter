@@ -194,9 +194,9 @@ func (ts *TokenSorter) isLastFoundSortedTokenGreater(lastFoundSortedToken LastFo
 	return result == 1
 }
 
-func contains(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
+func contains(nums []int, e int) bool {
+	for _, n := range nums {
+		if n == e {
 			return true
 		}
 	}
