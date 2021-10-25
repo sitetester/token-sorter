@@ -22,7 +22,7 @@ const tempDir = "temp"
 const dataSortedTemp = tempDir + "/data_sorted_temp"
 
 type TokenSorter struct {
-	OutputPath string
+	outputPath string
 	bufferSize int
 	field      string
 }
@@ -31,7 +31,7 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 
 	// clean start
 	removeFile(output)
-	ts.OutputPath = output
+	ts.outputPath = output
 	ts.bufferSize = bufferSize
 	ts.field = field
 
@@ -161,7 +161,7 @@ func (ts *TokenSorter) performActionsAfterLastFoundSortedToken(lastFoundSortedTo
 }
 
 func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool) {
-	f, err := os.OpenFile(ts.OutputPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(ts.outputPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
 	}
