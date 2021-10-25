@@ -11,7 +11,7 @@ func TestSortByName(t *testing.T) {
 	output := "data.out"
 
 	var ts TokenSorter
-	ts.Sort(input, output, 4096, SortByFieldName)
+	ts.Sort(input, output, 4096, sortByFieldName)
 
 	testOutFileExists(t, output)
 
@@ -59,7 +59,7 @@ func TestSortByAddress(t *testing.T) {
 	output := "data.out"
 
 	var ts TokenSorter
-	ts.Sort(input, output, 4096, SortByFieldAddress)
+	ts.Sort(input, output, 4096, sortByFieldAddress)
 
 	testOutFileExists(t, output)
 

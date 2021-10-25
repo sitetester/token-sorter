@@ -185,7 +185,7 @@ func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool)
 
 func (ts *TokenSorter) isLastFoundSortedTokenGreater(lastFoundSortedToken LastFoundSortedToken, token Token) bool {
 	var result int
-	if ts.field == SortByFieldName {
+	if ts.field == sortByFieldName {
 		result = strings.Compare(lastFoundSortedToken.token.Name, token.Name)
 	} else {
 		result = strings.Compare(lastFoundSortedToken.token.Address, token.Address)

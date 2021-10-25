@@ -76,7 +76,7 @@ func (sdh *SortedDatasetsHandler) handleTokens(wg *sync.WaitGroup, tokens []Toke
 }
 
 func (sdh *SortedDatasetsHandler) handleSort(tokens []Token) {
-	if sdh.field == SortByFieldName {
+	if sdh.field == sortByFieldName {
 		sortByName(tokens)
 	} else {
 		sortByAddress(tokens)

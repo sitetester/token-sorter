@@ -2,8 +2,8 @@ package main
 
 import "flag"
 
-const SortByFieldName = "name"
-const SortByFieldAddress = "address"
+const sortByFieldName = "name"
+const sortByFieldAddress = "address"
 
 func main() {
 	input := flag.String("input", "data/data.in", "Input file to sort")
@@ -12,12 +12,12 @@ func main() {
 	bufferSize := flag.Int("buffer-size", 1048576, "buffer size to use for file operations")
 	flag.Parse()
 
-	field := SortByFieldName
+	field := sortByFieldName
 	if len(flag.Args()) > 0 {
 		field = flag.Args()[0]
 	}
 
-	if field != SortByFieldName && field != SortByFieldAddress {
+	if field != sortByFieldName && field != sortByFieldAddress {
 		println("Only `name` or `address` could be used for sorting")
 		return
 	}
