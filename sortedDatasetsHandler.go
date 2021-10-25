@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -29,10 +28,6 @@ func (sdh *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSi
 	var tokens []Token
 
 	scanner := getScanner(file, bufferSize)
-
-	buf := make([]byte, bufio.MaxScanTokenSize)
-	scanner.Buffer(buf, bufferSize)
-
 	createTempDir(tempDir, 0755)
 
 	count := 0
