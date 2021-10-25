@@ -81,17 +81,13 @@ func removeLineFromFile(filePath string, lineNum int, bufferSize int) {
 		}
 	}
 
-	tokenStr := sb.String()
+	tokensStr := sb.String()
 	closeFile(fr)
 
-	if len(tokenStr) > 0 {
+	if len(tokensStr) > 0 {
 		// truncate existing file
-		fw, err := os.Create(filePath)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		_, err = fw.WriteString(tokenStr)
+		fw := createFile(filePath)
+		_, err = fw.WriteString(tokensStr)
 		if err != nil {
 			log.Fatal(err)
 		}
