@@ -29,6 +29,7 @@ type TokenSorter struct {
 
 var jsonHelper JsonHelper
 var lastFoundSortedToken LastFoundSortedToken
+var token Token
 
 func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field string) {
 
@@ -94,7 +95,6 @@ mainLoop:
 		for scanner.Scan() {
 			lineNum += 1
 
-			var token Token
 			jsonHelper.ToStruct(scanner.Text(), &token)
 			initialSortedToken := token
 
@@ -117,7 +117,6 @@ func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFile
 		token:   initialSortedToken,
 	}
 
-	var token Token
 	var f *os.File
 mainLoop:
 	for otherFileNum := 1; otherFileNum <= totalFiles; otherFileNum++ {
