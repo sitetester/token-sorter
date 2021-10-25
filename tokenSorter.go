@@ -117,6 +117,7 @@ func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFile
 		token:   initialSortedToken,
 	}
 
+	var token Token
 	var f *os.File
 mainLoop:
 	for otherFileNum := 1; otherFileNum <= totalFiles; otherFileNum++ {
@@ -130,7 +131,7 @@ mainLoop:
 				currentLineNum := 0
 				for scanner.Scan() {
 					currentLineNum += 1
-					var token Token
+
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
 					if ts.isLastFoundSortedTokenGreater(lastFoundSortedToken, token) {
