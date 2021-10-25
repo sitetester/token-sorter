@@ -26,7 +26,6 @@ func (sdh *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSi
 	defer closeFile(file)
 
 	var wg sync.WaitGroup
-	var token Token
 	var tokens []Token
 
 	scanner := getScanner(file, bufferSize)
