@@ -10,12 +10,14 @@ import (
 	"sync"
 )
 
-type SortedDatasetsHandler struct{}
+type SortedDatasetsHandler struct {
+	field string
+}
 
 // https://stackoverflow.com/questions/39859222/golang-how-to-overcome-scan-buffer-limit-from-bufio
 // https://stackoverflow.com/questions/38902092/does-bufio-newscanner-in-golang-reads-the-entire-file-in-memory-instead-of-a-lin
-func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize int, field string) int {
-	var wg sync.WaitGroup
+func (sdh *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize int, field string) int {
+	sdh.field = field
 
 	file, err := os.Open(input)
 	if err != nil {
@@ -23,6 +25,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 	}
 	defer closeFile(file)
 
+	var wg sync.WaitGroup
 	var token Token
 	var tokens []Token
 
@@ -51,7 +54,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 			totalFiles += 1
 
 			wg.Add(1)
-			go handleTokens(&wg, field, tokens, totalFiles)
+			go sdh.handleTokens(&wg, tokens, totalFiles)
 
 			tokens = make([]Token, 0) // reinitialize
 		}
@@ -61,7 +64,7 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 	if len(tokens) > 0 {
 		totalFiles += 1
 		wg.Add(1)
-		go handleTokens(&wg, field, tokens, totalFiles)
+		go sdh.handleTokens(&wg, tokens, totalFiles)
 	}
 
 	wg.Wait()
@@ -73,15 +76,15 @@ func (h *SortedDatasetsHandler) splitIntoSortedDatasets(input string, bufferSize
 	return totalFiles
 }
 
-func handleTokens(wg *sync.WaitGroup, field string, tokens []Token, fileNameCount int) {
+func (sdh *SortedDatasetsHandler) handleTokens(wg *sync.WaitGroup, tokens []Token, fileNameCount int) {
 	defer wg.Done()
 
-	handleSort(field, tokens)
+	sdh.handleSort(tokens)
 	tempSave(fileNameCount, tokens) // tokens are now in sorted order
 }
 
-func handleSort(field string, tokens []Token) {
-	if field == SortByFieldName {
+func (sdh *SortedDatasetsHandler) handleSort(tokens []Token) {
+	if sdh.field == SortByFieldName {
 		sortByName(tokens)
 	} else {
 		sortByAddress(tokens)

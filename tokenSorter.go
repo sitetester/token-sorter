@@ -24,6 +24,7 @@ const dataSortedTemp = tempDir + "/data_sorted_temp"
 type TokenSorter struct {
 	OutputPath string
 	bufferSize int
+	field      string
 }
 
 func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field string) {
@@ -32,6 +33,7 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	removeFile(output)
 	ts.OutputPath = output
 	ts.bufferSize = bufferSize
+	ts.field = field
 
 	var sortedDatasetsHandler SortedDatasetsHandler
 	totalFiles := sortedDatasetsHandler.splitIntoSortedDatasets(input, bufferSize, field)
@@ -53,7 +55,7 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	isFirstLine := true
 	var deletedFileNums []int
 	for len(deletedFileNums) != totalFiles {
-		totalFiles, deletedFileNums = ts.proceedWithFinalSort(totalFiles, field, lastFoundSortedToken, deletedFileNums, isFirstLine)
+		totalFiles, deletedFileNums = ts.proceedWithFinalSort(totalFiles, lastFoundSortedToken, deletedFileNums, isFirstLine)
 		isFirstLine = false
 	}
 
@@ -64,7 +66,7 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 }
 
 func (ts *TokenSorter) proceedWithFinalSort(
-	totalFiles int, field string, lastFoundSortedToken LastFoundSortedToken, deletedFileNums []int, isFirstLine bool,
+	totalFiles int, lastFoundSortedToken LastFoundSortedToken, deletedFileNums []int, isFirstLine bool,
 ) (int, []int) {
 
 mainLoop:
@@ -93,7 +95,7 @@ mainLoop:
 			jsonHelper.ToStruct(scanner.Text(), &token)
 			initialSortedToken := token
 
-			lastFoundSortedToken = ts.compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken, field)
+			lastFoundSortedToken = ts.compareWithOtherFiles(fileNum, lineNum, totalFiles, initialSortedToken)
 			ts.performActionsAfterLastFoundSortedToken(lastFoundSortedToken, isFirstLine)
 
 			// start again from beginning (fileNum=1, lineNum=1)
@@ -105,7 +107,7 @@ mainLoop:
 	return totalFiles, deletedFileNums
 }
 
-func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token, field string) LastFoundSortedToken {
+func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token) LastFoundSortedToken {
 	lastFoundSortedToken = LastFoundSortedToken{
 		FileNum: fileNum,
 		LineNum: lineNum,
@@ -128,7 +130,7 @@ mainLoop:
 					var token Token
 					jsonHelper.ToStruct(scanner.Text(), &token)
 
-					if isLastFoundSortedTokenGreater(lastFoundSortedToken, token, field) {
+					if ts.isLastFoundSortedTokenGreater(lastFoundSortedToken, token) {
 						lastFoundSortedToken = LastFoundSortedToken{
 							FileNum: otherFileNum,
 							LineNum: currentLineNum,
@@ -178,9 +180,9 @@ func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool)
 	}
 }
 
-func isLastFoundSortedTokenGreater(lastFoundSortedToken LastFoundSortedToken, token Token, field string) bool {
+func (ts *TokenSorter) isLastFoundSortedTokenGreater(lastFoundSortedToken LastFoundSortedToken, token Token) bool {
 	var result int
-	if field == SortByFieldName {
+	if ts.field == SortByFieldName {
 		result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
 	} else {
 		result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
