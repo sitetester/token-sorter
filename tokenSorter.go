@@ -46,9 +46,9 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	// next, we will take first token from first file and compare it with tokens of all other files
 	// during comparison, if some token from other file is in sorted order, then we make it default/initial sorted token
 	// & jump to next file, since all remaining tokens in THAT file are already in sorted form
-	// at end of comparisons with all files, we remove it from specific file and put/append in final sorted file
+	// at end of comparisons with all files, we remove it from specific file (so it's not compared next time) and put/append in final sorted file
 	// this process continues, until all entries are matched
-	// if some file has no entries, then we simply delete it, so it's not compared next time
+	// if some file has no entries, then we simply delete it (so it's not compared next time)
 
 	lastFoundSortedToken = LastFoundSortedToken{
 		fileNum: 1,
