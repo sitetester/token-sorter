@@ -96,7 +96,7 @@ func sortByAddress(tokens []Token) {
 }
 
 func tempSave(fileNameCount int, tokens []Token) {
-	f := createFile(fmt.Sprintf("%s/data_sorted_temp_%d.txt", tempDir, fileNameCount))
+	f := createFile(fmt.Sprintf("%s_%d.txt", dataSortedTemp, fileNameCount))
 	defer closeFile(f)
 
 	var sb strings.Builder
