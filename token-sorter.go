@@ -20,7 +20,7 @@ func main() {
 		field = flag.Args()[0]
 	}
 
-	if field != SortByFieldName && field != "address" {
+	if field != SortByFieldName && field != SortByFieldAddress {
 		println("Only `name` or `address` could be used for sorting")
 		return
 	}
