@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// https://stackoverflow.com/questions/39859222/golang-how-to-overcome-scan-buffer-limit-from-bufio
+// https://stackoverflow.com/questions/38902092/does-bufio-newscanner-in-golang-reads-the-entire-file-in-memory-instead-of-a-lin
 func getScanner(file *os.File, bufferSize int) *bufio.Scanner {
 	scanner := bufio.NewScanner(file)
 
