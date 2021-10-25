@@ -8,9 +8,9 @@ import (
 )
 
 type LastFoundSortedToken struct {
-	FileNum int // number of the temporary sorted file
-	LineNum int // line where this token was found
-	Token   Token
+	fileNum int // number of the temporary sorted file
+	lineNum int // line where this token was found
+	token   Token
 }
 
 type Token struct {
@@ -26,6 +26,9 @@ type TokenSorter struct {
 	bufferSize int
 	field      string
 }
+
+var jsonHelper JsonHelper
+var lastFoundSortedToken LastFoundSortedToken
 
 func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field string) {
 
@@ -47,8 +50,8 @@ func (ts *TokenSorter) Sort(input string, output string, bufferSize int, field s
 	// if some file has no entries, then we simply delete it, so it's not compared next time
 
 	lastFoundSortedToken = LastFoundSortedToken{
-		FileNum: 1,
-		LineNum: 1,
+		fileNum: 1,
+		lineNum: 1,
 	}
 
 	// proceed with final sort
@@ -109,9 +112,9 @@ mainLoop:
 
 func (ts *TokenSorter) compareWithOtherFiles(fileNum int, lineNum int, totalFiles int, initialSortedToken Token) LastFoundSortedToken {
 	lastFoundSortedToken = LastFoundSortedToken{
-		FileNum: fileNum,
-		LineNum: lineNum,
-		Token:   initialSortedToken,
+		fileNum: fileNum,
+		lineNum: lineNum,
+		token:   initialSortedToken,
 	}
 
 	var f *os.File
@@ -132,9 +135,9 @@ mainLoop:
 
 					if ts.isLastFoundSortedTokenGreater(lastFoundSortedToken, token) {
 						lastFoundSortedToken = LastFoundSortedToken{
-							FileNum: otherFileNum,
-							LineNum: currentLineNum,
-							Token:   token,
+							fileNum: otherFileNum,
+							lineNum: currentLineNum,
+							token:   token,
 						}
 
 						if otherFileNum == totalFiles {
@@ -156,8 +159,8 @@ mainLoop:
 }
 
 func (ts *TokenSorter) performActionsAfterLastFoundSortedToken(lastFoundSortedToken LastFoundSortedToken, isFirstLine bool) {
-	ts.appendToFinalSortedDataset(lastFoundSortedToken.Token, isFirstLine)
-	removeLineFromFile(buildPath(lastFoundSortedToken.FileNum), lastFoundSortedToken.LineNum, ts.bufferSize)
+	ts.appendToFinalSortedDataset(lastFoundSortedToken.token, isFirstLine)
+	removeLineFromFile(buildPath(lastFoundSortedToken.fileNum), lastFoundSortedToken.lineNum, ts.bufferSize)
 }
 
 func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool) {
@@ -183,9 +186,9 @@ func (ts *TokenSorter) appendToFinalSortedDataset(token Token, isFirstLine bool)
 func (ts *TokenSorter) isLastFoundSortedTokenGreater(lastFoundSortedToken LastFoundSortedToken, token Token) bool {
 	var result int
 	if ts.field == SortByFieldName {
-		result = strings.Compare(lastFoundSortedToken.Token.Name, token.Name)
+		result = strings.Compare(lastFoundSortedToken.token.Name, token.Name)
 	} else {
-		result = strings.Compare(lastFoundSortedToken.Token.Address, token.Address)
+		result = strings.Compare(lastFoundSortedToken.token.Address, token.Address)
 	}
 
 	return result == 1

@@ -5,9 +5,6 @@ import "flag"
 const SortByFieldName = "name"
 const SortByFieldAddress = "address"
 
-var jsonHelper JsonHelper
-var lastFoundSortedToken LastFoundSortedToken
-
 func main() {
 	input := flag.String("input", "data/data.in", "Input file to sort")
 	output := flag.String("output", "./data.out", "Output file to store sorted data")
