@@ -1,5 +1,5 @@
-It's a token sorting utility that sorts its input taken from file I and stores it into the file O Sorting could be by
-either name by --name key (default) or by address by --address key.
+It's a token sorting utility that sorts its input taken from file I and stores it into the file O. Sorting could be by
+either name by `name` key (default) or by address by `address` key.
 
 Input file format:
 
@@ -15,5 +15,12 @@ Input file format:
 
 Each line of the file is a token, with "name" and "address" fields.
 
-Example usage:
-`./token-sorter --input=data.in --output=data.out --buffer-size=20 --name`
+Example usage:  
+`./token-sorter --input=data.in --output=data.out --buffer-size=20`  
+`./token-sorter --input=data.in --output=data.out --buffer-size=20 name`  
+`./token-sorter --input=data.in --output=data.out --buffer-size=20 address`
+
+How it works In order to not exhaust available system memory (in case of big file), it splits input file into multiple
+sorted files and compare each file token with other files tokens and eventually final sorted token is moved/appended to
+a separate sorted file & deleted from original file (so that, it's not compared next time). This process continues until
+all tokens from each file is compared and moved. 
