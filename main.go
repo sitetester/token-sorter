@@ -8,8 +8,8 @@ const fieldName = "name"
 const fieldAddress = "address"
 
 func main() {
-	inPath := flag.String("inPath", "./data/data.in", "Input file to sort")
-	outPath := flag.String("outPath", "./data.out", "Output file to store sorted data")
+	inPath := flag.String("input", "./data/data.in", "Input file to sort")
+	outPath := flag.String("output", "./data.out", "Output file to store sorted data")
 	// In general, we don’t need to specify buffer, since Golang bufio scanner uses an internal buffer by default
 	bufferSize := flag.Int("buffer-size", 1048576, "buffer size to use for file operations")
 	flag.Parse()
