@@ -1,5 +1,5 @@
-It's a token sorting utility that sorts its input taken from file I and stores it into the file O. Sorting could be by
-either name by `name` key (default) or by address by `address` key.
+It's a token sorting utility that sorts its input taken from file I and stores it into the file O. 
+Sorting could be either by `name` (default) or `address` key.
 
 Input file format:
 
