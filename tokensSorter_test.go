@@ -42,13 +42,13 @@ func TestSortByName(t *testing.T) {
 	testTotalLines(t, lines, 7)
 
 	// first line
-	testTokenMatchLineNum(t, lines[0], Token{
+	testTokenMatchLine(t, lines[0], Token{
 		Name:    "Amp",
 		Address: "0xfF20817765cB7f73d4bde2e66e067E58D11095C2",
 	})
 
 	// last line
-	testTokenMatchLineNum(t, lines[len(lines)-1], Token{
+	testTokenMatchLine(t, lines[len(lines)-1], Token{
 		Name:    "hoge.finance",
 		Address: "0xfAd45E47083e4607302aa43c65fB3106F1cd7607",
 	})
@@ -60,9 +60,9 @@ func testTotalLines(t *testing.T, lines []string, expectedLength int) {
 	}
 }
 
-func testTokenMatchLineNum(t *testing.T, lineNum string, expectedToken Token) {
+func testTokenMatchLine(t *testing.T, line string, expectedToken Token) {
 	var token Token
-	if err := json.Unmarshal([]byte(lineNum), &token); err != nil {
+	if err := json.Unmarshal([]byte(line), &token); err != nil {
 		log.Fatal(err)
 	}
 
@@ -87,13 +87,13 @@ func TestSortByAddress(t *testing.T) {
 
 	// check some lines sort order
 	// first line
-	testTokenMatchLineNum(t, lines[0], Token{
+	testTokenMatchLine(t, lines[0], Token{
 		Name:    "Reef.finance",
 		Address: "0xFE3E6a25e6b192A42a44ecDDCd13796471735ACf",
 	})
 
 	// last line
-	testTokenMatchLineNum(t, lines[len(lines)-1], Token{
+	testTokenMatchLine(t, lines[len(lines)-1], Token{
 		Name:    "FalconSwap Token",
 		Address: "0xfffffffFf15AbF397dA76f1dcc1A1604F45126DB",
 	})
