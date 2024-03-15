@@ -32,4 +32,5 @@ func main() {
 		byField:    field,
 	}
 	tokenSorter.Sort()
+	println("Success!")
 }
