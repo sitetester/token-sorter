@@ -8,8 +8,8 @@ import (
 	"testing"
 )
 
-var input = "./data/dummy.txt"
-var output = "data.out"
+var input = "./data/dummy_in.txt"
+var output = "./data/dummy_out.txt"
 
 func TestIsValidSortField(t *testing.T) {
 	var tokenSorter TokenSorter
