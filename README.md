@@ -16,6 +16,8 @@ Input file format:
 Each line of the file is a token, with "name" and "address" fields.
 
 Example usage:  
+`go build .` create binary :)
+
 `./token-sorter --input=data/data.in --output=data/data.out --buffer-size=20`  
 `./token-sorter --input=data/data.in --output=data/data.out --buffer-size=20 name`  
 `./token-sorter --input=data/data.in --output=data/data.out --buffer-size=20 address`
